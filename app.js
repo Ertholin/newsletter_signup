@@ -14,6 +14,10 @@ app.post("/", function(req, res){
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var email = req.body.email;
+  console.log("Your firstname is : " + firstName);
+  console.log("Your lastname is : " + lastName);
+  console.log("Your email is : " +email);
+  
 })
 
 
