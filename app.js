@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
+const https = require("https");
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -11,16 +12,50 @@ app.get("/", function(req, res){
 })
 
 app.post("/", function(req, res){
-  var firstName = req.body.firstName;
-  var lastName = req.body.lastName;
-  var email = req.body.email;
-  console.log("Your firstname is : " + firstName);
-  console.log("Your lastname is : " + lastName);
-  console.log("Your email is : " +email);
-  
-})
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+
+  const data = {
+    members : [
+      {
+        email_address : email,
+        status : "subscribed",
+        merge_fields : {
+          FNAME : firstName,
+          LNAME : lastName
+        }
+      }
+    ]
+  };
+
+  const jsonData = JSON.stringify(data);
+  const url = "https://us18.api.mailchimp.com/3.0/lists/4f79469248";
+
+  const options = {
+    method: "POST",
+    auth: "ertho1:a45a0d52643b22485cc86119f448a56c-us18"
+
+  }
+
+  const request = https.request(url, options, function(response){
+    response.on("data", function(data){
+      console.log(JSON.parse(data));
+    })
+  })
+
+  request.write(jsonData);
+  request.end();
+
+});
 
 
 app.listen(3000, function(){
   console.log("Server is running on Port 3000");
 })
+
+// API KEY
+// a45a0d52643b22485cc86119f448a56c-us18
+
+// Audience id
+// 4f79469248
